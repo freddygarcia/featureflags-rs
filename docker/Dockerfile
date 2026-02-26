@@ -1,25 +1,23 @@
-# Build stage: server only (no other workspace apps)
-FROM rust:1-bookworm AS builder
+# Build stage: server only (musl for static binary, small image)
+FROM rust:1-alpine AS builder
+RUN apk add --no-cache musl-dev
 WORKDIR /app
 
-# Use minimal workspace that only has server + libs/core (no cli, etc.)
 COPY docker/Cargo.toml.server ./Cargo.toml
 COPY Cargo.lock ./
 COPY libs ./libs
 COPY apps/server ./apps/server
 
-RUN cargo build -p featureflags-server --release
+RUN cargo build -p featureflags-server --release && \
+    strip /app/target/release/featureflags-server 2>/dev/null || true
 
-# Runtime stage
-FROM debian:bookworm-slim
-RUN apt-get update && apt-get install -y --no-install-recommends ca-certificates && rm -rf /var/lib/apt/lists/*
+# Runtime stage (< 50MB)
+FROM alpine:3.19
+RUN apk add --no-cache ca-certificates
 WORKDIR /app
-
 ENV FLAGS_PATH=/data/flags.yml
 
-COPY flags/flags.yml /data/flags.yml
 COPY --from=builder /app/target/release/featureflags-server /usr/local/bin/featureflags-server
 
 EXPOSE 8080
-
 ENTRYPOINT ["/usr/local/bin/featureflags-server"]
