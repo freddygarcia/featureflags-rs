@@ -1,0 +1,6 @@
+target
+.git
+apps/cli
+apps/client-py
+*.md
+.dockerignore

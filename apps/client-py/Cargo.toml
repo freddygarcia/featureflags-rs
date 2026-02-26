@@ -1,0 +1,17 @@
+[package]
+name = "featureflags-client"
+version = "0.1.0"
+edition = "2021"
+
+[workspace]
+
+[lib]
+name = "featureflags_client"
+crate-type = ["cdylib"]
+
+[dependencies]
+pyo3 = { version = "0.28", features = ["extension-module"] }
+reqwest = { version = "0.12", features = ["blocking", "json"] }
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+urlencoding = "2"

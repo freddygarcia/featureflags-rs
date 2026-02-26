@@ -1,0 +1,12 @@
+[workspace]
+version = "0.1.0"
+resolver = "2"
+members = [
+    "apps/cli",
+    "apps/server",
+    "libs/core",
+]
+
+[workspace.dependencies]
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0.149"
