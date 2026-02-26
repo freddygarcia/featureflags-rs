@@ -1,8 +1,10 @@
-# Build stage
+# Build stage: server only (no other workspace apps)
 FROM rust:1-bookworm AS builder
 WORKDIR /app
 
-COPY Cargo.toml Cargo.lock ./
+# Use minimal workspace that only has server + libs/core (no cli, etc.)
+COPY docker/Cargo.toml.server ./Cargo.toml
+COPY Cargo.lock ./
 COPY libs ./libs
 COPY apps/server ./apps/server
 
@@ -15,7 +17,8 @@ WORKDIR /app
 
 ENV FLAGS_PATH=/data/flags.yml
 
-COPY --from=builder /app/target/release/featureflags_server /usr/local/bin/featureflags-server
+COPY flags/flags.yml /data/flags.yml
+COPY --from=builder /app/target/release/featureflags-server /usr/local/bin/featureflags-server
 
 EXPOSE 8080
 

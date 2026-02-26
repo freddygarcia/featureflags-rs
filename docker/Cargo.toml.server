@@ -1,0 +1,14 @@
+# Minimal workspace for building only featureflags-server (used by Docker).
+# Keep in sync with root Cargo.toml workspace.dependencies and server-related members.
+
+[workspace]
+version = "0.1.0"
+resolver = "2"
+members = [
+    "apps/server",
+    "libs/core",
+]
+
+[workspace.dependencies]
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0.149"
